@@ -222,6 +222,10 @@
 </head>
 <body>
 
+    <!-- Elemen Audio (Tersembunyi) -->
+    <!-- Atribut 'loop' membuat lagu berulang terus menerus -->
+    <audio id="bg-music" src="lagu.mp3" loop></audio>
+
     <!-- STEP 1: Ajakan -->
     <div class="container" id="step-1">
         <div class="gif-container">
@@ -299,7 +303,7 @@
 
     <!-- STEP 3: Tiket Kencan (Hasil Akhir) -->
     <div class="container" id="step-3">
-        <!-- GIF Baru Ditambahkan Di Sini -->
+        <!-- GIF Baru -->
         <div class="gif-container">
             <img src="kucing5.gif" alt="Dancing Cat">
         </div>
@@ -335,60 +339,38 @@
 
     <script>
         // --- PROTEKSI KODE MULAI DARI SINI --- //
-        
-        // 1. Mencegah Klik Kanan
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        // 2. Mencegah Shortcut Keyboard (F12, Ctrl+Shift+I, Ctrl+U, dll)
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
         document.onkeydown = function(e) {
-            if (e.keyCode === 123) { // Blokir F12
-                return false;
-            }
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) { // Blokir Ctrl+Shift+I
-                return false;
-            }
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) { // Blokir Ctrl+Shift+C
-                return false;
-            }
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) { // Blokir Ctrl+Shift+J
-                return false;
-            }
-            if (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) { // Blokir Ctrl+U (View Source)
-                return false;
-            }
-            if (e.ctrlKey && e.keyCode === 'S'.charCodeAt(0)) { // Blokir Ctrl+S (Save Page)
-                return false;
-            }
-            if (e.ctrlKey && e.keyCode === 'P'.charCodeAt(0)) { // Blokir Ctrl+P (Print Page)
-                return false;
-            }
+            if (e.keyCode === 123) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode === 'S'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode === 'P'.charCodeAt(0)) return false;
         };
         // --- PROTEKSI KODE SELESAI --- //
 
 
         // --- LOGIKA UTAMA WEBSITE --- //
         const btnNo = document.getElementById('btn-no');
+        const bgMusic = document.getElementById('bg-music');
 
         function moveButton(e) {
-            if (e) {
-                e.preventDefault(); 
-            }
-
+            if (e) { e.preventDefault(); }
             btnNo.style.position = 'fixed';
-
             const maxX = window.innerWidth - btnNo.offsetWidth - 20;
             const maxY = window.innerHeight - btnNo.offsetHeight - 20;
-
             const randomX = Math.max(20, Math.random() * maxX);
             const randomY = Math.max(20, Math.random() * maxY);
-
             btnNo.style.left = randomX + 'px';
             btnNo.style.top = randomY + 'px';
         }
 
         function goToStep2() {
+            // Memutar lagu saat tombol "Ayukkk!" diklik
+            bgMusic.play().catch(error => console.log("Audio play failed:", error));
+            
             document.getElementById('step-1').style.display = 'none';
             document.getElementById('step-2').style.display = 'block';
         }
