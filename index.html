@@ -17,6 +17,7 @@
             font-family: 'Poppins', sans-serif;
             text-align: center;
             overflow: hidden;
+            position: relative;
         }
         .container {
             background-color: white;
@@ -190,18 +191,23 @@
             60% { transform: translateY(-5px); }
         }
 
+        /* Copyright Style */
+        .copyright {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #ff9999;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 5;
+        }
+
         /* Hide steps initially */
         #step-2, #step-v1, #step-v2, #step-3 {
             display: none;
         }
-        .copyright {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 0.75em;
-      color: #94a3b8;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 12px;
-    }
     </style>
 </head>
 <body>
@@ -306,9 +312,12 @@
             📸 JANGAN LUPA SCREENSHOT TIKET INI & KIRIM KE AKU YAAA!
         </div>
     </div>
-<div class="copyright">
-    &copy; Copyright Design by Muhamad Islahul Khoir
-  </div>
+
+    <!-- Copyright Section -->
+    <div class="copyright">
+        &copy; 2026 design by islahulism
+    </div>
+
     <script>
         const btnNo = document.getElementById('btn-no');
 
