@@ -18,6 +18,12 @@
             text-align: center;
             overflow: hidden;
             position: relative;
+            
+            /* Proteksi: Mencegah seleksi teks */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .container {
             background-color: white;
@@ -88,6 +94,9 @@
             width: 150px;
             border-radius: 10px;
             margin-bottom: 15px;
+            
+            /* Proteksi: Mencegah gambar di-drag */
+            pointer-events: none; 
         }
 
         /* Form Styles */
@@ -191,7 +200,7 @@
             60% { transform: translateY(-5px); }
         }
 
-        /* Copyright Style - SUDAH DIPERBAIKI */
+        /* Copyright Style */
         .copyright {
             position: fixed; 
             bottom: 20px; 
@@ -325,6 +334,41 @@
     </div>
 
     <script>
+        // --- PROTEKSI KODE MULAI DARI SINI --- //
+        
+        // 1. Mencegah Klik Kanan
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Mencegah Shortcut Keyboard (F12, Ctrl+Shift+I, Ctrl+U, dll)
+        document.onkeydown = function(e) {
+            if (e.keyCode === 123) { // Blokir F12
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) { // Blokir Ctrl+Shift+I
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) { // Blokir Ctrl+Shift+C
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) { // Blokir Ctrl+Shift+J
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) { // Blokir Ctrl+U (View Source)
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode === 'S'.charCodeAt(0)) { // Blokir Ctrl+S (Save Page)
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode === 'P'.charCodeAt(0)) { // Blokir Ctrl+P (Print Page)
+                return false;
+            }
+        };
+        // --- PROTEKSI KODE SELESAI --- //
+
+
+        // --- LOGIKA UTAMA WEBSITE --- //
         const btnNo = document.getElementById('btn-no');
 
         function moveButton(e) {
