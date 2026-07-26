@@ -223,7 +223,7 @@
 <body>
 
     <!-- Elemen Audio (Tersembunyi) -->
-    <!-- Atribut 'loop' membuat lagu berulang terus menerus -->
+    <!-- Pastikan file lagu.mp3 sudah ada di folder yang sama -->
     <audio id="bg-music" src="lagu.mp3" loop></audio>
 
     <!-- STEP 1: Ajakan -->
@@ -285,14 +285,20 @@
         </div>
     </div>
 
-    <!-- VERIFIKASI 2: Captcha Lucu -->
+    <!-- VERIFIKASI 2: Captcha & PAP Lucu -->
     <div class="container" id="step-v2">
         <div class="gif-container">
             <img src="kucing4.gif" alt="Love Cat">
         </div>
         <h2>Verifikasi #2 🤖</h2>
-        <p>Satu langkah lagi nih. Buktiin kalau kamu manusia termanis dengan centang kotak di bawah:</p>
         
+        <div class="form-group" style="text-align: center; background: #fff0f0; padding: 15px; border-radius: 10px; border: 2px dashed #ffb3b3;">
+            <label style="margin-bottom: 10px;">Biar valid, foto dulu dong sekarang! 📸</label>
+            <input type="file" id="pap-kamera" accept="image/*" capture="user" style="display: none;" onchange="previewPAP(event)">
+            <button class="btn-secondary" onclick="document.getElementById('pap-kamera').click()">Buka Kamera & PAP</button>
+            <p id="pap-status" style="font-size: 12px; color: #ff4d4d; margin-top: 10px; margin-bottom: 0; font-weight: bold; display: none;">✅ PAP Berhasil Diamankan!</p>
+        </div>
+
         <label class="captcha-box">
             <input type="checkbox" id="janji-kencan">
             <label for="janji-kencan">"Aku janji bakal seru-seruan bareng dan happy-happy hari ini!" ✌️</label>
@@ -303,11 +309,6 @@
 
     <!-- STEP 3: Tiket Kencan (Hasil Akhir) -->
     <div class="container" id="step-3">
-        <!-- GIF Baru -->
-        <div class="gif-container">
-            <img src="kucing5.gif" alt="Dancing Cat">
-        </div>
-        
         <h2>Yay, It's a Date! 💖</h2>
         <p>Jadwal kita udah aman. Jangan sampai lupa yaa!</p>
         
@@ -324,6 +325,11 @@
             <div class="ticket-item">
                 <span class="label">Destinasi:</span>
                 <span class="value" id="res-place"></span>
+            </div>
+            <!-- Area Hasil Foto PAP -->
+            <div class="ticket-item" style="text-align: center; margin-top: 15px; border-top: 1px dashed #ffb3b3; padding-top: 15px;">
+                <span class="label">Telah Diverifikasi Oleh:</span>
+                <img id="hasil-pap" src="" alt="PAP" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; display: none; margin: 10px auto 0; border: 3px solid #ff4d4d;">
             </div>
         </div>
 
@@ -355,6 +361,7 @@
         // --- LOGIKA UTAMA WEBSITE --- //
         const btnNo = document.getElementById('btn-no');
         const bgMusic = document.getElementById('bg-music');
+        let papTersimpan = false;
 
         function moveButton(e) {
             if (e) { e.preventDefault(); }
@@ -396,9 +403,31 @@
             document.getElementById('step-v2').style.display = 'block';
         }
 
+        // Fungsi untuk menangani foto PAP
+        function previewPAP(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgElement = document.getElementById('hasil-pap');
+                    imgElement.src = e.target.result;
+                    imgElement.style.display = 'block';
+                    papTersimpan = true;
+                    document.getElementById('pap-status').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
         function goToStep3() {
             const isChecked = document.getElementById('janji-kencan').checked;
             
+            // Cek PAP dulu
+            if(!papTersimpan) {
+                alert("Eits, verifikasi wajah (PAP) dulu dong sebelum cetak tiket! 📸");
+                return;
+            }
+
             if(!isChecked) {
                 alert("Waduh, dicentang dulu dong janjinya biar afdol~ 🥺");
                 return;
