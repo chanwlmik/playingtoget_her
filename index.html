@@ -94,8 +94,6 @@
             width: 150px;
             border-radius: 10px;
             margin-bottom: 15px;
-            
-            /* Proteksi: Mencegah gambar di-drag */
             pointer-events: none; 
         }
 
@@ -254,7 +252,6 @@
 
         <div class="form-group">
             <label>Pilih Tempat (Jakarta Area):</label>
-            <!-- Fungsi onchange ditambahkan untuk memunculkan input teks -->
             <select id="place-picker" onchange="toggleCustomPlace()">
                 <option value="" disabled selected>Pilih lokasi favoritmu...</option>
                 <option value="Museum Date di Kota Tua 🏛️">Museum Date di Kota Tua 🏛️</option>
@@ -265,10 +262,8 @@
                 <option value="Aquarium Date di Jakarta Aquarium 🐠">Aquarium Date di Jakarta Aquarium 🐠</option>
                 <option value="Nonton & Makan di GI / PIM 🍿">Nonton & Makan di GI / PIM 🍿</option>
                 <option value="Terserah kamu, aku ngikut aja! 😉">Terserah kamu, aku ngikut aja! 😉</option>
-                <!-- Opsi baru untuk isi manual -->
                 <option value="custom">Isi sendiri yuk! ✍️</option>
             </select>
-            <!-- Kolom input ini awalnya disembunyikan -->
             <input type="text" id="custom-place" placeholder="Ketik tempat kencan impianmu..." style="display: none; margin-top: 10px;">
         </div>
 
@@ -299,11 +294,17 @@
         <div class="form-group" style="text-align: center; background: #fff0f0; padding: 15px; border-radius: 10px; border: 2px dashed #ffb3b3;">
             <label style="margin-bottom: 10px;">Biar valid, foto dulu dong sekarang! 📸</label>
             <input type="file" id="pap-kamera" accept="image/*" capture="user" style="display: none;" onchange="previewPAP(event)">
-            <button class="btn-secondary" onclick="document.getElementById('pap-kamera').click()">Buka Kamera & PAP</button>
-            <p id="pap-status" style="font-size: 12px; color: #ff4d4d; margin-top: 10px; margin-bottom: 0; font-weight: bold; display: none;">✅ PAP Berhasil Diamankan!</p>
+            
+            <!-- Area Preview Foto (Baru) -->
+            <div id="preview-container" style="display: none; margin-top: 10px; margin-bottom: 15px;">
+                <p style="font-size: 12px; color: #555; margin-bottom: 8px;">Review Hasil PAP (Bakal dipotong bulat gini)</p>
+                <img id="preview-foto" src="" alt="Preview PAP" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #ff4d4d; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            </div>
+
+            <button class="btn-secondary" id="btn-kamera" onclick="document.getElementById('pap-kamera').click()">Buka Kamera & PAP</button>
+            <p id="pap-status" style="font-size: 12px; color: #ff4d4d; margin-top: 10px; margin-bottom: 0; font-weight: bold; display: none;">✅ Kalo ngerasa kurang pas, klik tombol retake di atas lagi ya!</p>
         </div>
 
-        <!-- Teks Perjanjian -->
         <label class="captcha-box">
             <input type="checkbox" id="janji-kencan">
             <label for="janji-kencan">"Aku janji bakal seru seruan bareng dan happy happy bareng waktu date nanti" ✌️</label>
@@ -313,7 +314,6 @@
     </div>
 
     <!-- STEP 3: Tiket Kencan (Hasil Akhir) -->
-    <!-- GIF kucing dihapus dari step ini -->
     <div class="container" id="step-3">
         <h2>Yay, It's a Date! 💖</h2>
         <p>Jadwal kita udah aman. Jangan sampai lupa yaa!</p>
@@ -334,7 +334,6 @@
             </div>
             <div class="ticket-item" style="text-align: center; margin-top: 15px; border-top: 1px dashed #ffb3b3; padding-top: 15px;">
                 <span class="label">Telah Diverifikasi Oleh:</span>
-                <!-- Ukuran PAP diperbesar menjadi 160x160px -->
                 <img id="hasil-pap" src="" alt="PAP" style="width: 160px; height: 160px; object-fit: cover; border-radius: 50%; display: none; margin: 10px auto 0; border: 3px solid #ff4d4d;">
             </div>
         </div>
@@ -426,11 +425,21 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    // Tampilkan preview di step verifikasi
+                    const previewImg = document.getElementById('preview-foto');
+                    previewImg.src = e.target.result;
+                    document.getElementById('preview-container').style.display = 'block';
+                    
+                    // Siapkan juga foto untuk di tiket akhir
                     const imgElement = document.getElementById('hasil-pap');
                     imgElement.src = e.target.result;
                     imgElement.style.display = 'block';
+                    
                     papTersimpan = true;
+                    
+                    // Ubah UI untuk kasih tau bisa retake
                     document.getElementById('pap-status').style.display = 'block';
+                    document.getElementById('btn-kamera').innerText = "Ulangi PAP (Retake) 📸";
                 }
                 reader.readAsDataURL(file);
             }
