@@ -111,7 +111,7 @@
             color: #333;
             font-size: 14px;
         }
-        input[type="date"], select {
+        input[type="date"], input[type="text"], select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ffb3b3;
@@ -121,7 +121,7 @@
             outline: none;
             box-sizing: border-box;
         }
-        input[type="date"]:focus, select:focus {
+        input[type="date"]:focus, input[type="text"]:focus, select:focus {
             border-color: #ff4d4d;
         }
         
@@ -223,7 +223,6 @@
 <body>
 
     <!-- Elemen Audio (Tersembunyi) -->
-    <!-- Pastikan file lagu.mp3 sudah ada di folder yang sama -->
     <audio id="bg-music" src="lagu.mp3" loop></audio>
 
     <!-- STEP 1: Ajakan -->
@@ -255,7 +254,8 @@
 
         <div class="form-group">
             <label>Pilih Tempat (Jakarta Area):</label>
-            <select id="place-picker">
+            <!-- Fungsi onchange ditambahkan untuk memunculkan input teks -->
+            <select id="place-picker" onchange="toggleCustomPlace()">
                 <option value="" disabled selected>Pilih lokasi favoritmu...</option>
                 <option value="Museum Date di Kota Tua 🏛️">Museum Date di Kota Tua 🏛️</option>
                 <option value="Jalan santai sore di PIK 🌊">Jalan santai sore di PIK 🌊</option>
@@ -265,7 +265,11 @@
                 <option value="Aquarium Date di Jakarta Aquarium 🐠">Aquarium Date di Jakarta Aquarium 🐠</option>
                 <option value="Nonton & Makan di GI / PIM 🍿">Nonton & Makan di GI / PIM 🍿</option>
                 <option value="Terserah kamu, aku ngikut aja! 😉">Terserah kamu, aku ngikut aja! 😉</option>
+                <!-- Opsi baru untuk isi manual -->
+                <option value="custom">Isi sendiri yuk! ✍️</option>
             </select>
+            <!-- Kolom input ini awalnya disembunyikan -->
+            <input type="text" id="custom-place" placeholder="Ketik tempat kencan impianmu..." style="display: none; margin-top: 10px;">
         </div>
 
         <button class="btn-primary" style="width: 100%;" onclick="goToStepV1()">Lanjuttt >></button>
@@ -299,9 +303,10 @@
             <p id="pap-status" style="font-size: 12px; color: #ff4d4d; margin-top: 10px; margin-bottom: 0; font-weight: bold; display: none;">✅ PAP Berhasil Diamankan!</p>
         </div>
 
+        <!-- Teks Perjanjian Baru -->
         <label class="captcha-box">
             <input type="checkbox" id="janji-kencan">
-            <label for="janji-kencan">"Aku janji bakal seru-seruan bareng dan happy-happy hari ini!" ✌️</label>
+            <label for="janji-kencan">"Aku janji bakal seru seruan bareng dan happy happy bareng waktu date nanti" ✌️</label>
         </label>
 
         <button class="btn-primary" style="width: 100%;" onclick="goToStep3()">Bikin Tiketnya! 🖨️</button>
@@ -309,6 +314,10 @@
 
     <!-- STEP 3: Tiket Kencan (Hasil Akhir) -->
     <div class="container" id="step-3">
+        <div class="gif-container">
+            <img src="kucing5.gif" alt="Dancing Cat">
+        </div>
+        
         <h2>Yay, It's a Date! 💖</h2>
         <p>Jadwal kita udah aman. Jangan sampai lupa yaa!</p>
         
@@ -326,7 +335,6 @@
                 <span class="label">Destinasi:</span>
                 <span class="value" id="res-place"></span>
             </div>
-            <!-- Area Hasil Foto PAP -->
             <div class="ticket-item" style="text-align: center; margin-top: 15px; border-top: 1px dashed #ffb3b3; padding-top: 15px;">
                 <span class="label">Telah Diverifikasi Oleh:</span>
                 <img id="hasil-pap" src="" alt="PAP" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; display: none; margin: 10px auto 0; border: 3px solid #ff4d4d;">
@@ -375,16 +383,31 @@
         }
 
         function goToStep2() {
-            // Memutar lagu saat tombol "Ayukkk!" diklik
             bgMusic.play().catch(error => console.log("Audio play failed:", error));
             
             document.getElementById('step-1').style.display = 'none';
             document.getElementById('step-2').style.display = 'block';
         }
 
+        // Fungsi baru untuk memunculkan/menyembunyikan input manual destinasi
+        function toggleCustomPlace() {
+            const picker = document.getElementById('place-picker');
+            const customInput = document.getElementById('custom-place');
+            if (picker.value === 'custom') {
+                customInput.style.display = 'block';
+            } else {
+                customInput.style.display = 'none';
+            }
+        }
+
         function goToStepV1() {
             const dateVal = document.getElementById('date-picker').value;
-            const placeVal = document.getElementById('place-picker').value;
+            let placeVal = document.getElementById('place-picker').value;
+
+            // Jika pilih isi sendiri, ambil nilai dari input teks
+            if (placeVal === 'custom') {
+                placeVal = document.getElementById('custom-place').value;
+            }
 
             if(!dateVal || !placeVal) {
                 alert("Hei, isi dulu dong tanggal sama tempatnya! 😉");
@@ -403,7 +426,6 @@
             document.getElementById('step-v2').style.display = 'block';
         }
 
-        // Fungsi untuk menangani foto PAP
         function previewPAP(event) {
             const file = event.target.files[0];
             if (file) {
@@ -422,7 +444,6 @@
         function goToStep3() {
             const isChecked = document.getElementById('janji-kencan').checked;
             
-            // Cek PAP dulu
             if(!papTersimpan) {
                 alert("Eits, verifikasi wajah (PAP) dulu dong sebelum cetak tiket! 📸");
                 return;
@@ -434,7 +455,12 @@
             }
 
             const dateVal = document.getElementById('date-picker').value;
-            const placeVal = document.getElementById('place-picker').value;
+            let placeVal = document.getElementById('place-picker').value;
+
+            // Jika pilih isi sendiri, ambil nilai dari input teks untuk tiket
+            if (placeVal === 'custom') {
+                placeVal = document.getElementById('custom-place').value;
+            }
 
             const dateObj = new Date(dateVal);
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
